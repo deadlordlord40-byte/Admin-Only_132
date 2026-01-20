@@ -183,8 +183,6 @@
         
         .icon-orders { background: linear-gradient(135deg, rgba(67, 97, 238, 0.2), rgba(67, 97, 238, 0.1)); color: var(--primary); }
         .icon-messages { background: linear-gradient(135deg, rgba(76, 201, 240, 0.2), rgba(76, 201, 240, 0.1)); color: var(--success); }
-        .icon-revenue { background: linear-gradient(135deg, rgba(247, 37, 133, 0.2), rgba(247, 37, 133, 0.1)); color: var(--warning); }
-        .icon-pending { background: linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(255, 0, 110, 0.1)); color: var(--danger); }
         
         .stat-value {
             font-size: 32px;
@@ -201,7 +199,7 @@
         /* Dashboard Grid */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 30px;
             margin-bottom: 30px;
         }
@@ -381,6 +379,7 @@
             padding: 25px;
             border: 1px solid var(--border);
             transition: all 0.3s ease;
+            position: relative;
         }
         
         .card:hover {
@@ -482,6 +481,29 @@
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Delete Button */
+        .delete-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 0, 110, 0.2);
+            border: 1px solid var(--danger);
+            border-radius: 6px;
+            color: var(--danger);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .delete-btn:hover {
+            background: var(--danger);
+            color: white;
         }
         
         /* Modal */
@@ -686,69 +708,29 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="stat-box">
-                    <div class="stat-header">
-                        <div>
-                            <div class="stat-value" id="totalRevenue">₹0</div>
-                            <div class="stat-label">Total Revenue</div>
-                        </div>
-                        <div class="stat-icon icon-revenue">
-                            <i class="fas fa-rupee-sign"></i>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="stat-box">
-                    <div class="stat-header">
-                        <div>
-                            <div class="stat-value" id="pendingOrders">0</div>
-                            <div class="stat-label">Pending</div>
-                        </div>
-                        <div class="stat-icon icon-pending">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         
         <!-- Dashboard Tab -->
         <div class="tab-content active" id="dashboard-tab">
             <div class="dashboard-grid">
-                <div class="revenue-card">
-                    <div class="revenue-header">
-                        <div class="revenue-title">
-                            <h3>Revenue Overview</h3>
-                            <p>Total earnings from all orders</p>
-                        </div>
-                        <div class="revenue-amount" id="revenueAmount">₹0</div>
-                    </div>
-                    
-                    <div class="revenue-stats">
-                        <div class="revenue-stat">
-                            <div class="revenue-stat-value" id="todayRevenue">₹0</div>
-                            <div class="revenue-stat-label">Today's Revenue</div>
-                        </div>
-                        <div class="revenue-stat">
-                            <div class="revenue-stat-value" id="monthRevenue">₹0</div>
-                            <div class="revenue-stat-label">This Month</div>
-                        </div>
-                        <div class="revenue-stat">
-                            <div class="revenue-stat-value" id="avgOrder">₹0</div>
-                            <div class="revenue-stat-label">Average Order</div>
-                        </div>
-                        <div class="revenue-stat">
-                            <div class="revenue-stat-value" id="totalCustomers">0</div>
-                            <div class="revenue-stat-label">Total Customers</div>
-                        </div>
-                    </div>
-                </div>
-                
                 <div class="quick-stats">
                     <div class="quick-stat">
                         <div class="quick-stat-header">
                             <div class="quick-stat-icon icon-orders">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="quick-stat-title">Pending Orders</div>
+                        </div>
+                        <div class="quick-stat-value" id="pendingOrders">0</div>
+                        <div class="quick-stat-change">
+                            <span>Need attention</span>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-stat">
+                        <div class="quick-stat-header">
+                            <div class="quick-stat-icon icon-messages">
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="quick-stat-title">Accepted Orders</div>
@@ -756,7 +738,21 @@
                         <div class="quick-stat-value" id="acceptedOrders">0</div>
                         <div class="quick-stat-change positive">
                             <i class="fas fa-arrow-up"></i>
-                            <span>From last month</span>
+                            <span>Processing</span>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-stat">
+                        <div class="quick-stat-header">
+                            <div class="quick-stat-icon icon-orders">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="quick-stat-title">Delivered Orders</div>
+                        </div>
+                        <div class="quick-stat-value" id="deliveredOrders">0</div>
+                        <div class="quick-stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Completed</span>
                         </div>
                     </div>
                     
@@ -773,32 +769,32 @@
                             <span>Response rate</span>
                         </div>
                     </div>
-                    
-                    <div class="quick-stat">
-                        <div class="quick-stat-header">
-                            <div class="quick-stat-icon icon-revenue">
-                                <i class="fas fa-truck"></i>
-                            </div>
-                            <div class="quick-stat-title">Delivered</div>
-                        </div>
-                        <div class="quick-stat-value" id="deliveredOrders">0</div>
-                        <div class="quick-stat-change positive">
-                            <i class="fas fa-arrow-up"></i>
-                            <span>Delivery success</span>
+                </div>
+                
+                <div class="revenue-card">
+                    <div class="revenue-header">
+                        <div class="revenue-title">
+                            <h3>Overview</h3>
+                            <p>Total counts and activities</p>
                         </div>
                     </div>
                     
-                    <div class="quick-stat">
-                        <div class="quick-stat-header">
-                            <div class="quick-stat-icon icon-pending">
-                                <i class="fas fa-exclamation-circle"></i>
-                            </div>
-                            <div class="quick-stat-title">Pending Replies</div>
+                    <div class="revenue-stats">
+                        <div class="revenue-stat">
+                            <div class="revenue-stat-value" id="totalOrdersCount">0</div>
+                            <div class="revenue-stat-label">Total Orders</div>
                         </div>
-                        <div class="quick-stat-value" id="pendingReplies">0</div>
-                        <div class="quick-stat-change negative">
-                            <i class="fas fa-arrow-down"></i>
-                            <span>Needs attention</span>
+                        <div class="revenue-stat">
+                            <div class="revenue-stat-value" id="totalMessagesCount">0</div>
+                            <div class="revenue-stat-label">Total Messages</div>
+                        </div>
+                        <div class="revenue-stat">
+                            <div class="revenue-stat-value" id="processingOrders">0</div>
+                            <div class="revenue-stat-label">Processing Orders</div>
+                        </div>
+                        <div class="revenue-stat">
+                            <div class="revenue-stat-value" id="pendingReplies">0</div>
+                            <div class="revenue-stat-label">Pending Replies</div>
                         </div>
                     </div>
                 </div>
@@ -941,6 +937,31 @@
             </div>
         </div>
     </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-trash-alt"></i> Confirm Delete</h3>
+            </div>
+            <div class="modal-body">
+                <div id="deleteMessage" style="text-align: center; margin-bottom: 30px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 60px; color: var(--danger); margin-bottom: 20px;"></i>
+                    <h3 style="color: var(--text); margin-bottom: 10px;" id="deleteTitle"></h3>
+                    <p style="color: var(--text-secondary);" id="deleteDescription"></p>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 25px;">
+                    <button class="btn btn-danger" onclick="confirmDelete()" style="flex: 1;">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <button class="btn" onclick="closeDeleteModal()" style="flex: 1; background: var(--border); color: var(--text);">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Firebase Configuration
@@ -961,6 +982,8 @@
         let selectedStatus = '';
         let currentOrdersFilter = 'all';
         let currentMessagesFilter = 'all';
+        let deleteType = ''; // 'order' or 'message'
+        let deleteId = '';
 
         // Load data on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -1033,50 +1056,25 @@
                 // Get all orders
                 const ordersSnapshot = await db.collection('orders').get();
                 const messagesSnapshot = await db.collection('messages').get();
-                const usersSnapshot = await db.collection('users').get();
                 
-                let totalRevenue = 0;
                 let pendingOrders = 0;
                 let acceptedOrders = 0;
                 let deliveredOrders = 0;
-                let todayRevenue = 0;
-                let monthRevenue = 0;
-                
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                
-                const thisMonth = new Date();
-                thisMonth.setDate(1);
-                thisMonth.setHours(0, 0, 0, 0);
+                let processingOrders = 0;
+                let repliedMessages = 0;
+                let pendingReplies = 0;
                 
                 // Calculate order stats
                 ordersSnapshot.forEach(doc => {
                     const order = doc.data();
                     
-                    if (order.total) {
-                        totalRevenue += order.total;
-                        
-                        // Today's revenue
-                        const orderDate = order.createdAt ? new Date(order.createdAt) : new Date();
-                        if (orderDate >= today) {
-                            todayRevenue += order.total;
-                        }
-                        
-                        // This month's revenue
-                        if (orderDate >= thisMonth) {
-                            monthRevenue += order.total;
-                        }
-                    }
-                    
                     if (order.status === 'Pending') pendingOrders++;
                     if (order.status === 'Accepted') acceptedOrders++;
                     if (order.status === 'Delivered') deliveredOrders++;
+                    if (order.status === 'Processing') processingOrders++;
                 });
                 
                 // Calculate message stats
-                let repliedMessages = 0;
-                let pendingReplies = 0;
-                
                 messagesSnapshot.forEach(doc => {
                     const msg = doc.data();
                     if (msg.replied) {
@@ -1089,25 +1087,19 @@
                 // Update stats
                 document.getElementById('totalOrders').textContent = ordersSnapshot.size;
                 document.getElementById('totalMessages').textContent = messagesSnapshot.size;
-                document.getElementById('totalRevenue').textContent = `₹${totalRevenue.toLocaleString()}`;
-                document.getElementById('pendingOrders').textContent = pendingOrders;
                 
                 // Update badges
                 document.getElementById('ordersBadge').textContent = ordersSnapshot.size;
                 document.getElementById('messagesBadge').textContent = messagesSnapshot.size;
                 
                 // Update dashboard stats
-                document.getElementById('revenueAmount').textContent = `₹${totalRevenue.toLocaleString()}`;
-                document.getElementById('todayRevenue').textContent = `₹${todayRevenue.toLocaleString()}`;
-                document.getElementById('monthRevenue').textContent = `₹${monthRevenue.toLocaleString()}`;
-                document.getElementById('avgOrder').textContent = ordersSnapshot.size > 0 
-                    ? `₹${Math.floor(totalRevenue / ordersSnapshot.size).toLocaleString()}`
-                    : '₹0';
-                document.getElementById('totalCustomers').textContent = usersSnapshot.size;
-                
+                document.getElementById('totalOrdersCount').textContent = ordersSnapshot.size;
+                document.getElementById('totalMessagesCount').textContent = messagesSnapshot.size;
+                document.getElementById('pendingOrders').textContent = pendingOrders;
                 document.getElementById('acceptedOrders').textContent = acceptedOrders;
-                document.getElementById('repliedMessages').textContent = repliedMessages;
                 document.getElementById('deliveredOrders').textContent = deliveredOrders;
+                document.getElementById('processingOrders').textContent = processingOrders;
+                document.getElementById('repliedMessages').textContent = repliedMessages;
                 document.getElementById('pendingReplies').textContent = pendingReplies;
                 
             } catch (error) {
@@ -1145,7 +1137,7 @@
                                 </span>
                             </div>
                             <div style="font-size: 13px; color: var(--text-secondary);">
-                                ${order.userName} • ₹${order.total.toLocaleString()} • ${date}
+                                ${order.userName} • ${date}
                             </div>
                         </div>
                     `;
@@ -1259,6 +1251,10 @@
             
             return `
                 <div class="card">
+                    <button class="delete-btn" onclick="openDeleteModal('order', '${orderId}', 'Order #${order.id}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    
                     <div class="card-header">
                         <div class="card-title">Order #${order.id}</div>
                         <span class="card-status status-${order.status.toLowerCase()}">${order.status}</span>
@@ -1292,13 +1288,8 @@
                         ${order.items.map(item => `
                             <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border);">
                                 <span>${item.name} × ${item.quantity}</span>
-                                <span style="color: var(--primary); font-weight: 600;">₹${(item.price * item.quantity).toLocaleString()}</span>
                             </div>
                         `).join('')}
-                        <div style="display: flex; justify-content: space-between; padding: 10px 0; font-weight: 700; font-size: 18px;">
-                            <span>Total:</span>
-                            <span style="color: var(--primary);">₹${order.total.toLocaleString()}</span>
-                        </div>
                     </div>
                     
                     <div class="card-actions">
@@ -1381,6 +1372,10 @@
             
             return `
                 <div class="card">
+                    <button class="delete-btn" onclick="openDeleteModal('message', '${messageId}', 'Message from ${message.userName}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    
                     <div class="card-header">
                         <div class="card-title">From: ${message.userName}</div>
                         <span class="card-status ${message.replied ? 'status-replied' : 'status-pending'}">
@@ -1441,6 +1436,55 @@
             
             // Reload messages
             loadAllMessages();
+        }
+
+        // ========== DELETE FUNCTIONS ==========
+        function openDeleteModal(type, id, title) {
+            deleteType = type;
+            deleteId = id;
+            
+            document.getElementById('deleteTitle').textContent = `Delete ${type === 'order' ? 'Order' : 'Message'}?`;
+            document.getElementById('deleteDescription').textContent = 
+                type === 'order' 
+                    ? `Are you sure you want to delete ${title}? This action cannot be undone.`
+                    : `Are you sure you want to delete ${title}? This action cannot be undone.`;
+            
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            deleteType = '';
+            deleteId = '';
+        }
+
+        async function confirmDelete() {
+            try {
+                if (deleteType === 'order') {
+                    await db.collection('orders').doc(deleteId).delete();
+                    showToast('Order deleted successfully!', 'success');
+                } else if (deleteType === 'message') {
+                    await db.collection('messages').doc(deleteId).delete();
+                    showToast('Message deleted successfully!', 'success');
+                }
+                
+                closeDeleteModal();
+                
+                // Refresh data
+                loadDashboardStats();
+                loadRecentOrders();
+                loadRecentMessages();
+                
+                if (deleteType === 'order') {
+                    loadAllOrders();
+                } else if (deleteType === 'message') {
+                    loadAllMessages();
+                }
+                
+            } catch (error) {
+                console.error("Error deleting:", error);
+                showToast('Error deleting item', 'error');
+            }
         }
 
         // ========== MODAL FUNCTIONS ==========
@@ -1639,6 +1683,7 @@
             if (event.target.classList.contains('modal')) {
                 closeReplyModal();
                 closeStatusModal();
+                closeDeleteModal();
             }
         };
 
@@ -1647,6 +1692,7 @@
             if (event.key === 'Escape') {
                 closeReplyModal();
                 closeStatusModal();
+                closeDeleteModal();
             }
         });
     </script>
