@@ -3,16 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuxeVault Admin Panel</title>
+    <title>LuxeVault Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
             --gold: #FFD700;
-            --gold-dark: #D4AF37;
-            --gold-light: #FFED4E;
             --black: #0F0F0F;
             --gray: #1A1A1A;
             --card-bg: #1E1E1E;
@@ -20,7 +17,6 @@
             --red: #FF3B30;
             --green: #34C759;
             --blue: #007AFF;
-            --purple: #AF52DE;
         }
         
         * {
@@ -31,166 +27,65 @@
         }
         
         body {
-            background-color: var(--black);
+            background: var(--black);
             color: var(--white);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-        
-        /* Admin Header */
-        .admin-header {
-            background: linear-gradient(45deg, var(--black), var(--gray));
-            padding: 20px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid var(--gold);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        
-        .admin-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .admin-logo i {
-            font-size: 32px;
-            color: var(--gold);
-        }
-        
-        .admin-logo h1 {
-            font-size: 28px;
-            background: linear-gradient(to right, var(--gold), var(--purple));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 800;
-        }
-        
-        .admin-stats {
-            display: flex;
-            gap: 20px;
-        }
-        
-        .stat-box {
-            background: var(--card-bg);
-            padding: 12px 20px;
-            border-radius: 8px;
-            border-left: 4px solid var(--gold);
-            text-align: center;
-            min-width: 120px;
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--gold);
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #888;
-            margin-top: 5px;
-        }
-        
-        /* Admin Navigation */
-        .admin-nav {
-            display: flex;
-            gap: 10px;
-            background: var(--gray);
-            padding: 15px 5%;
-            border-bottom: 1px solid #333;
-            flex-wrap: wrap;
-        }
-        
-        .admin-nav-btn {
-            padding: 10px 20px;
-            background: var(--card-bg);
-            border: 1px solid #444;
-            color: #ccc;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .admin-nav-btn:hover, .admin-nav-btn.active {
-            background: var(--gold);
-            color: var(--black);
-            border-color: var(--gold);
-        }
-        
-        /* Admin Content */
-        .admin-content {
-            padding: 30px 5%;
-        }
-        
-        .admin-section {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .admin-section.active {
-            display: block;
-            opacity: 1;
-        }
-        
-        .section-title {
-            font-size: 28px;
-            margin-bottom: 25px;
-            color: var(--gold);
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 10px;
-        }
-        
-        .filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .filter-btn {
-            padding: 8px 16px;
-            background: var(--gray);
-            border: 1px solid #444;
-            color: #ccc;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .filter-btn.active {
-            background: var(--gold);
-            color: var(--black);
-            border-color: var(--gold);
-        }
-        
-        /* Cards Grid */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-        }
-        
-        .admin-card {
-            background: var(--card-bg);
-            border-radius: 10px;
             padding: 20px;
-            border: 1px solid #333;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 3px solid var(--gold);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: var(--gold);
+            font-size: 36px;
+        }
+        
+        .header p {
+            color: #888;
+            margin-top: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background: var(--gray);
+            border: none;
+            color: #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
             transition: all 0.3s;
         }
         
-        .admin-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--gold);
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.1);
+        .tab-btn.active {
+            background: var(--gold);
+            color: var(--black);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--gold);
         }
         
         .card-header {
@@ -204,126 +99,39 @@
         
         .card-title {
             font-size: 18px;
-            color: var(--white);
+            color: var(--gold);
             font-weight: 600;
         }
         
-        .card-badge {
-            background: var(--gold);
-            color: var(--black);
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .card-details {
-            margin: 10px 0;
-        }
-        
-        .detail-item {
-            display: flex;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .detail-label {
-            color: #888;
-            min-width: 100px;
-        }
-        
-        .detail-value {
-            color: var(--white);
-            flex: 1;
-        }
-        
-        .card-items {
-            background: rgba(255,215,0,0.1);
-            padding: 10px;
-            border-radius: 6px;
-            margin: 10px 0;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-        
-        .item-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-            border-bottom: 1px solid rgba(255,215,0,0.2);
-        }
-        
-        .item-row:last-child {
-            border-bottom: none;
-        }
-        
-        .card-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 14px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(45deg, var(--gold), var(--gold-dark));
-            color: var(--black);
-        }
-        
-        .btn-secondary {
-            background: var(--gray);
-            color: white;
-            border: 1px solid #444;
-        }
-        
-        .btn-success {
-            background: var(--green);
-            color: white;
-        }
-        
-        .btn-danger {
-            background: var(--red);
-            color: white;
-        }
-        
-        .btn-info {
-            background: var(--blue);
-            color: white;
-        }
-        
-        .btn:hover {
-            transform: translateY(-1px);
-            opacity: 0.9;
-        }
-        
-        /* Status Colors */
         .status-badge {
-            padding: 4px 10px;
+            padding: 5px 10px;
             border-radius: 4px;
             font-size: 12px;
             font-weight: bold;
         }
         
         .status-pending { background: var(--gold); color: var(--black); }
-        .status-processing { background: var(--blue); color: white; }
-        .status-delivered { background: var(--green); color: white; }
-        .status-cancelled { background: var(--red); color: white; }
-        .status-replied { background: var(--purple); color: white; }
-        .status-pending-reply { background: #FF9500; color: white; }
+        .status-replied { background: var(--green); color: white; }
         
-        /* Reply Modal */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--gold);
+            color: var(--black);
+        }
+        
+        .btn-secondary {
+            background: var(--blue);
+            color: white;
+        }
+        
         .modal {
             display: none;
             position: fixed;
@@ -332,8 +140,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.95);
-            z-index: 1001;
-            overflow-y: auto;
+            z-index: 1000;
             padding: 20px;
         }
         
@@ -341,320 +148,63 @@
             background: var(--card-bg);
             max-width: 500px;
             margin: 50px auto;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid var(--gold);
-            animation: modalSlideIn 0.3s ease;
-        }
-        
-        @keyframes modalSlideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        .modal-header {
-            background: var(--gold);
-            color: var(--black);
-            padding: 20px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-close {
-            cursor: pointer;
-            font-size: 24px;
-            color: var(--black);
-        }
-        
-        .modal-body {
             padding: 30px;
+            border-radius: 10px;
+            border: 2px solid var(--gold);
         }
         
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #ccc;
-            font-weight: 500;
-        }
-        
-        .form-group textarea {
+        textarea {
             width: 100%;
             padding: 12px;
             background: #2a2a2a;
             border: 1px solid #444;
             border-radius: 6px;
             color: white;
-            font-size: 16px;
+            margin: 10px 0 20px;
             min-height: 150px;
-            resize: vertical;
-        }
-        
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--gold);
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        /* Update Status Modal */
-        .status-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .status-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            border: 1px solid #444;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .status-option:hover {
-            background: rgba(255,215,0,0.1);
-            border-color: var(--gold);
-        }
-        
-        /* Notification */
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--green);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 10000;
-            display: none;
-            animation: slideIn 0.3s ease;
-        }
-        
-        .notification.error {
-            background: var(--red);
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #888;
-        }
-        
-        .loading i {
-            font-size: 48px;
-            color: var(--gold);
-            margin-bottom: 20px;
-        }
-        
-        /* No Data */
-        .no-data {
-            text-align: center;
-            padding: 40px;
-            color: #888;
-            background: var(--card-bg);
-            border-radius: 10px;
-            border: 2px dashed #444;
-        }
-        
-        .no-data i {
-            font-size: 48px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .admin-header {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .admin-stats {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .admin-nav {
-                justify-content: center;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Admin Header -->
-    <header class="admin-header">
-        <div class="admin-logo">
-            <i class="fas fa-shield-alt"></i>
-            <h1>LuxeVault Admin</h1>
-        </div>
-        
-        <div class="admin-stats">
-            <div class="stat-box">
-                <div class="stat-value" id="totalOrders">0</div>
-                <div class="stat-label">Total Orders</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value" id="totalMessages">0</div>
-                <div class="stat-label">Messages</div>
-            </div>
-        </div>
-    </header>
+    <div class="header">
+        <h1><i class="fas fa-shield-alt"></i> LuxeVault Admin</h1>
+        <p>Manage Orders & Customer Messages</p>
+    </div>
     
-    <!-- Admin Navigation (ONLY 2 TABS) -->
-    <nav class="admin-nav">
-        <button class="admin-nav-btn active" onclick="showSection('orders')">
-            <i class="fas fa-box"></i> All Orders
-        </button>
-        <button class="admin-nav-btn" onclick="showSection('messages')">
-            <i class="fas fa-envelope"></i> Customer Messages
-        </button>
-    </nav>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('orders')">📦 Orders</button>
+        <button class="tab-btn" onclick="showTab('messages')">📨 Messages</button>
+    </div>
     
-    <!-- Admin Content -->
-    <div class="admin-content">
-        <!-- Orders Section -->
-        <div class="admin-section active" id="orders-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <h2 class="section-title">All Orders</h2>
-                <div class="filters">
-                    <button class="filter-btn active" onclick="filterOrders('all')">All</button>
-                    <button class="filter-btn" onclick="filterOrders('Pending')">Pending</button>
-                    <button class="filter-btn" onclick="filterOrders('Processing')">Processing</button>
-                    <button class="filter-btn" onclick="filterOrders('Delivered')">Delivered</button>
-                    <button class="filter-btn" onclick="filterOrders('Cancelled')">Cancelled</button>
-                </div>
-            </div>
-            
-            <div class="cards-grid" id="ordersContainer">
-                <div class="loading">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading orders...</p>
-                </div>
-            </div>
+    <!-- Orders Tab -->
+    <div class="tab-content active" id="orders-tab">
+        <div id="ordersContainer">
+            <p>Loading orders...</p>
         </div>
-        
-        <!-- Messages Section -->
-        <div class="admin-section" id="messages-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <h2 class="section-title">Customer Messages</h2>
-                <div class="filters">
-                    <button class="filter-btn active" onclick="filterMessages('all')">All</button>
-                    <button class="filter-btn" onclick="filterMessages('pending')">Pending Reply</button>
-                    <button class="filter-btn" onclick="filterMessages('replied')">Replied</button>
-                </div>
-            </div>
-            
-            <div class="cards-grid" id="messagesContainer">
-                <div class="loading">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading messages...</p>
-                </div>
-            </div>
+    </div>
+    
+    <!-- Messages Tab -->
+    <div class="tab-content" id="messages-tab">
+        <div id="messagesContainer">
+            <p>Loading messages...</p>
         </div>
     </div>
     
     <!-- Reply Modal -->
     <div class="modal" id="replyModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <span>Reply to Customer</span>
-                <span class="modal-close" onclick="closeReplyModal()">×</span>
-            </div>
-            <div class="modal-body">
-                <div id="messageDetails" style="margin-bottom: 20px;"></div>
-                
-                <div class="form-group">
-                    <label>Your Reply *</label>
-                    <textarea id="replyText" placeholder="Type your reply here..."></textarea>
-                </div>
-                
-                <div class="form-actions">
-                    <button class="btn btn-primary" onclick="sendReply()" style="flex: 2;">
-                        <i class="fas fa-paper-plane"></i> Send Reply
-                    </button>
-                    <button class="btn btn-secondary" onclick="closeReplyModal()" style="flex: 1;">
-                        Cancel
-                    </button>
-                </div>
+            <h3 style="color: var(--gold); margin-bottom: 20px;">Reply to Customer</h3>
+            <div id="messageDetails" style="margin-bottom: 20px;"></div>
+            <textarea id="replyText" placeholder="Type your reply here..."></textarea>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-primary" onclick="sendReply()">Send Reply</button>
+                <button class="btn" onclick="closeReplyModal()" style="background: #666; color: white;">Cancel</button>
             </div>
         </div>
     </div>
-    
-    <!-- Update Status Modal -->
-    <div class="modal" id="statusModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>Update Order Status</span>
-                <span class="modal-close" onclick="closeStatusModal()">×</span>
-            </div>
-            <div class="modal-body">
-                <div id="orderDetails" style="margin-bottom: 20px;"></div>
-                
-                <div class="form-group">
-                    <label>Select New Status</label>
-                    <div class="status-options">
-                        <div class="status-option" onclick="selectStatus('Pending')">
-                            <span class="status-badge status-pending">Pending</span>
-                            <span>Order received, not yet processed</span>
-                        </div>
-                        <div class="status-option" onclick="selectStatus('Processing')">
-                            <span class="status-badge status-processing">Processing</span>
-                            <span>Order is being prepared for delivery</span>
-                        </div>
-                        <div class="status-option" onclick="selectStatus('Delivered')">
-                            <span class="status-badge status-delivered">Delivered</span>
-                            <span>Order has been delivered to customer</span>
-                        </div>
-                        <div class="status-option" onclick="selectStatus('Cancelled')">
-                            <span class="status-badge status-cancelled">Cancelled</span>
-                            <span>Order has been cancelled</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-actions">
-                    <button class="btn btn-primary" onclick="updateOrderStatus()" style="flex: 2;">
-                        <i class="fas fa-check"></i> Update Status
-                    </button>
-                    <button class="btn btn-secondary" onclick="closeStatusModal()" style="flex: 1;">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Notification -->
-    <div class="notification" id="notification"></div>
 
     <script>
-        // ========== FIREBASE CONFIGURATION ==========
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDXd5OXhBIeK6ZgsGac2WApW6b5ctOP138",
             authDomain: "rootandshoot-25366.firebaseapp.com",
@@ -664,272 +214,113 @@
             appId: "1:644099796079:web:6551da1de0a075fbeeb19a"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-
-        // Global Variables
+        
         let currentMessageId = null;
-        let currentOrderId = null;
-        let selectedStatus = 'Pending';
-        let currentFilter = 'all';
-        let messageFilter = 'all';
 
-        // ========== INITIALIZE APP ==========
+        // Load data on page load
         document.addEventListener('DOMContentLoaded', function() {
-            loadDashboardStats();
-            loadAllOrders();
-            loadAllMessages();
+            loadOrders();
+            loadMessages();
         });
 
-        // ========== NAVIGATION ==========
-        function showSection(section) {
-            // Hide all sections
-            document.querySelectorAll('.admin-section').forEach(sec => {
-                sec.classList.remove('active');
-            });
-            
-            // Remove active class from all nav buttons
-            document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+        function showTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
             
-            // Show selected section
-            document.getElementById(section + '-section').classList.add('active');
-            
-            // Add active class to clicked button
             event.target.classList.add('active');
-            
-            // Load data for the section
-            if (section === 'orders') loadAllOrders();
-            if (section === 'messages') loadAllMessages();
+            document.getElementById(tab + '-tab').classList.add('active');
         }
 
-        // ========== DASHBOARD FUNCTIONS ==========
-        async function loadDashboardStats() {
+        async function loadOrders() {
             try {
-                // Total Orders
-                const ordersSnapshot = await db.collection('orders').get();
-                document.getElementById('totalOrders').textContent = ordersSnapshot.size;
-                
-                // Total Messages
-                const messagesSnapshot = await db.collection('messages').get();
-                document.getElementById('totalMessages').textContent = messagesSnapshot.size;
-                
-            } catch (error) {
-                console.error('Error loading dashboard stats:', error);
-            }
-        }
-
-        // ========== ORDERS MANAGEMENT ==========
-        async function loadAllOrders() {
-            try {
-                let query = db.collection('orders');
-                
-                if (currentFilter !== 'all') {
-                    query = query.where('status', '==', currentFilter);
-                }
-                
-                const snapshot = await query.orderBy('createdAt', 'desc').get();
-                
+                const snapshot = await db.collection('orders').orderBy('createdAt', 'desc').get();
                 const container = document.getElementById('ordersContainer');
                 
                 if (snapshot.empty) {
-                    container.innerHTML = '<div class="no-data"><i class="fas fa-box-open"></i><p>No orders found</p></div>';
+                    container.innerHTML = '<p>No orders found</p>';
                     return;
                 }
                 
                 let html = '';
                 snapshot.forEach(doc => {
                     const order = doc.data();
-                    html += createOrderCard(doc.id, order);
+                    html += `
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Order #${order.id}</div>
+                                <span class="status-badge status-pending">${order.status}</span>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <div><strong>Customer:</strong> ${order.userName}</div>
+                                <div><strong>Email:</strong> ${order.userEmail}</div>
+                                <div><strong>Phone:</strong> ${order.userPhone}</div>
+                                <div><strong>Address:</strong> ${order.address}</div>
+                            </div>
+                            <div><strong>Total:</strong> ₹${order.total.toLocaleString()}</div>
+                        </div>
+                    `;
                 });
                 
                 container.innerHTML = html;
-                
             } catch (error) {
-                console.error('Error loading orders:', error);
-                document.getElementById('ordersContainer').innerHTML = '<div class="no-data"><i class="fas fa-exclamation-triangle"></i><p>Error loading orders</p></div>';
+                console.error("Error loading orders:", error);
             }
         }
 
-        function createOrderCard(orderId, order) {
-            return `
-                <div class="admin-card">
-                    <div class="card-header">
-                        <div class="card-title">Order #${order.id}</div>
-                        <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span>
-                    </div>
-                    
-                    <div class="card-details">
-                        <div class="detail-item">
-                            <span class="detail-label">Customer:</span>
-                            <span class="detail-value">${order.userName}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Email:</span>
-                            <span class="detail-value">${order.userEmail}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Phone:</span>
-                            <span class="detail-value">${order.userPhone}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Date:</span>
-                            <span class="detail-value">${order.createdAt?.toDate().toLocaleString()}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Address:</span>
-                            <span class="detail-value">${order.address}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="card-items">
-                        <strong style="display: block; margin-bottom: 5px; color: var(--gold);">Items:</strong>
-                        ${order.items.map(item => `
-                            <div class="item-row">
-                                <span>${item.name} × ${item.quantity}</span>
-                                <span style="color: var(--gold);">₹${(item.price * item.quantity).toLocaleString()}</span>
-                            </div>
-                        `).join('')}
-                        <div class="item-row" style="font-weight: bold; border-top: 2px solid var(--gold); padding-top: 5px;">
-                            <span>Total:</span>
-                            <span style="color: var(--gold); font-size: 16px;">₹${order.total.toLocaleString()}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="card-actions">
-                        <button class="btn btn-info" onclick="openStatusModal('${orderId}')">
-                            <i class="fas fa-edit"></i> Update Status
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function filterOrders(status) {
-            currentFilter = status;
-            
-            // Update filter buttons
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Reload orders
-            loadAllOrders();
-        }
-
-        // ========== MESSAGES MANAGEMENT ==========
-        async function loadAllMessages() {
+        async function loadMessages() {
             try {
-                const snapshot = await db.collection('messages')
-                    .orderBy('createdAt', 'desc')
-                    .get();
-                
+                const snapshot = await db.collection('messages').orderBy('createdAt', 'desc').get();
                 const container = document.getElementById('messagesContainer');
                 
                 if (snapshot.empty) {
-                    container.innerHTML = '<div class="no-data"><i class="fas fa-envelope-open"></i><p>No messages found</p></div>';
+                    container.innerHTML = '<p>No messages found</p>';
                     return;
                 }
                 
                 let html = '';
                 snapshot.forEach(doc => {
                     const msg = doc.data();
-                    
-                    // Apply filter
-                    if (messageFilter === 'pending' && msg.replied) return;
-                    if (messageFilter === 'replied' && !msg.replied) return;
-                    
-                    html += createMessageCard(doc.id, msg);
+                    html += `
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">From: ${msg.userName}</div>
+                                <span class="status-badge ${msg.replied ? 'status-replied' : 'status-pending'}">
+                                    ${msg.replied ? 'Replied' : 'Pending'}
+                                </span>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <div><strong>Email:</strong> ${msg.userEmail}</div>
+                                <div><strong>Phone:</strong> ${msg.userPhone}</div>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <strong>Message:</strong>
+                                <p style="margin-top: 5px; color: #ccc;">${msg.message}</p>
+                            </div>
+                            ${msg.replied ? `
+                                <div style="background: rgba(52,199,89,0.1); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                                    <strong>Your Reply:</strong>
+                                    <p style="margin-top: 5px; color: #ccc;">${msg.reply}</p>
+                                </div>
+                            ` : ''}
+                            <button class="btn btn-primary" onclick="openReplyModal('${doc.id}')">
+                                ${msg.replied ? 'Edit Reply' : 'Reply'}
+                            </button>
+                        </div>
+                    `;
                 });
                 
-                container.innerHTML = html || '<div class="no-data"><i class="fas fa-envelope-open"></i><p>No messages found with this filter</p></div>';
-                
+                container.innerHTML = html;
             } catch (error) {
-                console.error('Error loading messages:', error);
-                document.getElementById('messagesContainer').innerHTML = '<div class="no-data"><i class="fas fa-exclamation-triangle"></i><p>Error loading messages</p></div>';
+                console.error("Error loading messages:", error);
             }
         }
 
-        function createMessageCard(messageId, message) {
-            return `
-                <div class="admin-card">
-                    <div class="card-header">
-                        <div class="card-title">Message #${message.id}</div>
-                        <span class="status-badge ${message.replied ? 'status-replied' : 'status-pending-reply'}">
-                            ${message.replied ? 'Replied' : 'Pending Reply'}
-                        </span>
-                    </div>
-                    
-                    <div class="card-details">
-                        <div class="detail-item">
-                            <span class="detail-label">From:</span>
-                            <span class="detail-value">${message.userName}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Email:</span>
-                            <span class="detail-value">${message.userEmail}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Phone:</span>
-                            <span class="detail-value">${message.userPhone}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Date:</span>
-                            <span class="detail-value">${message.createdAt?.toDate().toLocaleString()}</span>
-                        </div>
-                    </div>
-                    
-                    <div style="margin: 10px 0;">
-                        <strong style="color: var(--gold);">Message:</strong>
-                        <div style="padding: 10px; background: rgba(255,215,0,0.1); border-radius: 6px; margin-top: 5px;">
-                            ${message.message}
-                        </div>
-                    </div>
-                    
-                    ${message.replied ? `
-                        <div style="margin: 10px 0;">
-                            <strong style="color: var(--purple);">Your Reply:</strong>
-                            <div style="padding: 10px; background: rgba(175,82,222,0.1); border-radius: 6px; margin-top: 5px;">
-                                ${message.reply || 'No reply content'}
-                            </div>
-                            <div style="font-size: 12px; color: #888; margin-top: 5px;">
-                                Replied on: ${message.replyDate?.toDate().toLocaleString()}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    <div class="card-actions">
-                        ${!message.replied ? `
-                            <button class="btn btn-primary" onclick="openReplyModal('${messageId}')">
-                                <i class="fas fa-reply"></i> Reply
-                            </button>
-                        ` : `
-                            <button class="btn btn-secondary" onclick="openReplyModal('${messageId}')">
-                                <i class="fas fa-edit"></i> Edit Reply
-                            </button>
-                        `}
-                    </div>
-                </div>
-            `;
-        }
-
-        function filterMessages(filter) {
-            messageFilter = filter;
-            
-            // Update filter buttons
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Reload messages
-            loadAllMessages();
-        }
-
-        // ========== MODAL FUNCTIONS ==========
         function openReplyModal(messageId) {
             currentMessageId = messageId;
             
@@ -940,22 +331,12 @@
                     document.getElementById('messageDetails').innerHTML = `
                         <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 6px;">
                             <strong>From: ${msg.userName}</strong><br>
-                            <small style="color: #888;">${msg.userEmail} • ${msg.userPhone}</small>
-                            <div style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;">
-                                <strong>Customer's Message:</strong><br>
-                                ${msg.message}
-                            </div>
-                            ${msg.replied ? `
-                                <div style="margin-top: 10px; padding: 10px; background: rgba(175,82,222,0.2); border-radius: 4px;">
-                                    <strong>Previous Reply:</strong><br>
-                                    ${msg.reply}
-                                </div>
-                            ` : ''}
+                            <div style="margin-top: 10px; color: #ccc;">${msg.message}</div>
                         </div>
                     `;
                     
-                    if (msg.replied && msg.reply) {
-                        document.getElementById('replyText').value = msg.reply;
+                    if (msg.replied) {
+                        document.getElementById('replyText').value = msg.reply || '';
                     }
                 }
             });
@@ -973,7 +354,7 @@
             const replyText = document.getElementById('replyText').value.trim();
             
             if (!replyText) {
-                showNotification('Please enter a reply message', 'error');
+                alert('Please enter a reply');
                 return;
             }
             
@@ -985,97 +366,14 @@
                 });
                 
                 closeReplyModal();
-                showNotification('Reply sent successfully!');
-                loadAllMessages();
+                alert('Reply sent successfully!');
+                loadMessages();
                 
             } catch (error) {
-                console.error('Error sending reply:', error);
-                showNotification('Error sending reply. Please try again.', 'error');
+                console.error("Error sending reply:", error);
+                alert('Error sending reply');
             }
         }
-
-        function openStatusModal(orderId) {
-            currentOrderId = orderId;
-            selectedStatus = 'Pending';
-            
-            // Load order details
-            db.collection('orders').doc(orderId).get().then(doc => {
-                if (doc.exists) {
-                    const order = doc.data();
-                    document.getElementById('orderDetails').innerHTML = `
-                        <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 6px;">
-                            <strong>Order #${order.id}</strong><br>
-                            <small style="color: #888;">Customer: ${order.userName}</small><br>
-                            <small style="color: #888;">Current Status: <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span></small>
-                        </div>
-                    `;
-                }
-            });
-            
-            document.getElementById('statusModal').style.display = 'block';
-        }
-
-        function closeStatusModal() {
-            document.getElementById('statusModal').style.display = 'none';
-            currentOrderId = null;
-            selectedStatus = 'Pending';
-        }
-
-        function selectStatus(status) {
-            selectedStatus = status;
-        }
-
-        async function updateOrderStatus() {
-            if (!currentOrderId || !selectedStatus) {
-                showNotification('Please select a status', 'error');
-                return;
-            }
-            
-            try {
-                await db.collection('orders').doc(currentOrderId).update({
-                    status: selectedStatus,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                closeStatusModal();
-                showNotification(`Order status updated to ${selectedStatus}`);
-                loadAllOrders();
-                loadDashboardStats();
-                
-            } catch (error) {
-                console.error('Error updating status:', error);
-                showNotification('Error updating status. Please try again.', 'error');
-            }
-        }
-
-        // ========== UTILITY FUNCTIONS ==========
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type === 'error' ? 'error' : ''}`;
-            notification.style.display = 'block';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
-        }
-
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                closeReplyModal();
-                closeStatusModal();
-            }
-        };
-
-        // Close modals with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeReplyModal();
-                closeStatusModal();
-            }
-        });
     </script>
 </body>
 </html>
-
