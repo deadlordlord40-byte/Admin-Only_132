@@ -17,6 +17,7 @@
             --red: #FF3B30;
             --green: #34C759;
             --blue: #007AFF;
+            --orange: #FF9500;
         }
         
         * {
@@ -111,6 +112,10 @@
         }
         
         .status-pending { background: var(--gold); color: var(--black); }
+        .status-accepted { background: var(--orange); color: white; }
+        .status-processing { background: var(--blue); color: white; }
+        .status-delivered { background: var(--green); color: white; }
+        .status-cancelled { background: var(--red); color: white; }
         .status-replied { background: var(--green); color: white; }
         
         .btn {
@@ -120,6 +125,7 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            margin: 2px;
         }
         
         .btn-primary {
@@ -127,8 +133,23 @@
             color: var(--black);
         }
         
-        .btn-secondary {
+        .btn-accept {
+            background: var(--orange);
+            color: white;
+        }
+        
+        .btn-process {
             background: var(--blue);
+            color: white;
+        }
+        
+        .btn-deliver {
+            background: var(--green);
+            color: white;
+        }
+        
+        .btn-cancel {
+            background: var(--red);
             color: white;
         }
         
@@ -162,6 +183,27 @@
             color: white;
             margin: 10px 0 20px;
             min-height: 150px;
+        }
+        
+        .status-options {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .status-option {
+            padding: 10px 15px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .status-option:hover {
+            background: var(--gold);
+            color: var(--black);
         }
     </style>
 </head>
@@ -203,6 +245,34 @@
         </div>
     </div>
 
+    <!-- Update Status Modal -->
+    <div class="modal" id="statusModal">
+        <div class="modal-content">
+            <h3 style="color: var(--gold); margin-bottom: 20px;">Update Order Status</h3>
+            <div id="orderDetails" style="margin-bottom: 20px;"></div>
+            
+            <div class="status-options">
+                <div class="status-option" onclick="selectStatus('Accepted')" data-status="Accepted">
+                    <i class="fas fa-check-circle"></i> Accept Order
+                </div>
+                <div class="status-option" onclick="selectStatus('Processing')" data-status="Processing">
+                    <i class="fas fa-cog"></i> Processing
+                </div>
+                <div class="status-option" onclick="selectStatus('Delivered')" data-status="Delivered">
+                    <i class="fas fa-truck"></i> Delivered
+                </div>
+                <div class="status-option" onclick="selectStatus('Cancelled')" data-status="Cancelled">
+                    <i class="fas fa-times-circle"></i> Cancel Order
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button class="btn btn-primary" onclick="updateOrderStatus()">Update Status</button>
+                <button class="btn" onclick="closeStatusModal()" style="background: #666; color: white;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Firebase Configuration
         const firebaseConfig = {
@@ -218,6 +288,8 @@
         const db = firebase.firestore();
         
         let currentMessageId = null;
+        let currentOrderId = null;
+        let selectedStatus = '';
 
         // Load data on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -250,19 +322,59 @@
                 let html = '';
                 snapshot.forEach(doc => {
                     const order = doc.data();
+                    const date = order.createdAt 
+                        ? new Date(order.createdAt).toLocaleString() 
+                        : 'Recent';
+                    
                     html += `
                         <div class="card">
                             <div class="card-header">
                                 <div class="card-title">Order #${order.id}</div>
-                                <span class="status-badge status-pending">${order.status}</span>
+                                <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span>
                             </div>
                             <div style="margin-bottom: 10px;">
+                                <div><strong>Date:</strong> ${date}</div>
                                 <div><strong>Customer:</strong> ${order.userName}</div>
                                 <div><strong>Email:</strong> ${order.userEmail}</div>
                                 <div><strong>Phone:</strong> ${order.userPhone}</div>
                                 <div><strong>Address:</strong> ${order.address}</div>
                             </div>
-                            <div><strong>Total:</strong> ₹${order.total.toLocaleString()}</div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <strong>Items:</strong>
+                                <div style="margin-top: 5px;">
+                                    ${order.items.map(item => `
+                                        <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #333;">
+                                            <span>${item.name} × ${item.quantity}</span>
+                                            <span style="color: var(--gold);">₹${(item.price * item.quantity).toLocaleString()}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <strong>Total:</strong> ₹${order.total.toLocaleString()}
+                            </div>
+                            
+                            <div>
+                                <strong>Update Status:</strong>
+                                <div style="margin-top: 10px;">
+                                    ${order.status === 'Pending' ? `
+                                        <button class="btn btn-accept" onclick="openStatusModal('${doc.id}')">
+                                            <i class="fas fa-check"></i> Accept Order
+                                        </button>
+                                    ` : ''}
+                                    <button class="btn btn-process" onclick="updateOrderStatusDirect('${doc.id}', 'Processing')">
+                                        <i class="fas fa-cog"></i> Processing
+                                    </button>
+                                    <button class="btn btn-deliver" onclick="updateOrderStatusDirect('${doc.id}', 'Delivered')">
+                                        <i class="fas fa-truck"></i> Delivered
+                                    </button>
+                                    <button class="btn btn-cancel" onclick="updateOrderStatusDirect('${doc.id}', 'Cancelled')">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     `;
                 });
@@ -270,6 +382,7 @@
                 container.innerHTML = html;
             } catch (error) {
                 console.error("Error loading orders:", error);
+                container.innerHTML = '<p style="color: red;">Error loading orders</p>';
             }
         }
 
@@ -286,6 +399,10 @@
                 let html = '';
                 snapshot.forEach(doc => {
                     const msg = doc.data();
+                    const date = msg.createdAt 
+                        ? new Date(msg.createdAt).toLocaleString() 
+                        : 'Recent';
+                    
                     html += `
                         <div class="card">
                             <div class="card-header">
@@ -295,6 +412,7 @@
                                 </span>
                             </div>
                             <div style="margin-bottom: 10px;">
+                                <div><strong>Date:</strong> ${date}</div>
                                 <div><strong>Email:</strong> ${msg.userEmail}</div>
                                 <div><strong>Phone:</strong> ${msg.userPhone}</div>
                             </div>
@@ -318,6 +436,7 @@
                 container.innerHTML = html;
             } catch (error) {
                 console.error("Error loading messages:", error);
+                container.innerHTML = '<p style="color: red;">Error loading messages</p>';
             }
         }
 
@@ -372,6 +491,88 @@
             } catch (error) {
                 console.error("Error sending reply:", error);
                 alert('Error sending reply');
+            }
+        }
+
+        function openStatusModal(orderId) {
+            currentOrderId = orderId;
+            selectedStatus = '';
+            
+            // Load order details
+            db.collection('orders').doc(orderId).get().then(doc => {
+                if (doc.exists) {
+                    const order = doc.data();
+                    document.getElementById('orderDetails').innerHTML = `
+                        <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 6px;">
+                            <strong>Order #${order.id}</strong><br>
+                            <div style="margin-top: 5px;">
+                                <strong>Customer:</strong> ${order.userName}<br>
+                                <strong>Current Status:</strong> <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            document.getElementById('statusModal').style.display = 'block';
+        }
+
+        function closeStatusModal() {
+            document.getElementById('statusModal').style.display = 'none';
+            currentOrderId = null;
+            selectedStatus = '';
+        }
+
+        function selectStatus(status) {
+            selectedStatus = status;
+            
+            // Update UI
+            document.querySelectorAll('.status-option').forEach(option => {
+                option.style.background = '#2a2a2a';
+                option.style.color = 'white';
+            });
+            
+            event.target.style.background = 'var(--gold)';
+            event.target.style.color = 'var(--black)';
+        }
+
+        async function updateOrderStatus() {
+            if (!currentOrderId || !selectedStatus) {
+                alert('Please select a status');
+                return;
+            }
+            
+            try {
+                await db.collection('orders').doc(currentOrderId).update({
+                    status: selectedStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                closeStatusModal();
+                alert(`Order status updated to ${selectedStatus}`);
+                loadOrders();
+                
+            } catch (error) {
+                console.error("Error updating status:", error);
+                alert('Error updating status');
+            }
+        }
+
+        async function updateOrderStatusDirect(orderId, status) {
+            if (confirm(`Are you sure you want to change status to ${status}?`)) {
+                try {
+                    await db.collection('orders').doc(orderId).update({
+                        status: status,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    alert(`Order status updated to ${status}`);
+                    loadOrders();
+                    
+                } catch (error) {
+                    console.error("Error updating status:", error);
+                    alert('Error updating status');
+                }
             }
         }
     </script>
